@@ -1,0 +1,13 @@
+flask>=2.0,<3.0
+flask-smorest>=0.42
+python-dotenv
+sqlalchemy
+flask-sqlalchemy
+flask-jwt-extended
+passlib
+flask-migrate
+gunicorn
+psycopg2-binary
+requests
+redis
+rq
