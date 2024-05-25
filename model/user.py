@@ -1,9 +1,6 @@
-from db import db
+from db import mongo
 
-class UserModel(db.Model):
-    __tablename__ = "users"
-
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=False, nullable=False)
-    email = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String(), nullable=False)
+class UserModel(mongo.Document):
+    email = mongo.StringField(required=True, unique=True)
+    username = mongo.StringField(max_length=50)
+    password = mongo.StringField()

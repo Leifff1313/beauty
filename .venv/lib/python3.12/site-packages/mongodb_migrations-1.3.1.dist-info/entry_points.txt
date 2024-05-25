@@ -1,0 +1,3 @@
+[console_scripts]
+mongodb-migrate = mongodb_migrations.cli:main
+mongodb-migrate-create = mongodb_migrations.cli:create_migration
