@@ -3,7 +3,6 @@ from flask_smorest import Blueprint, abort
 from model.user import UserModel
 from passlib.hash import pbkdf2_sha256
 from db import mongo
-from sqlalchemy.exc import SQLAlchemyError
 from Schema import UserRegisterSchema, UserSchema
 from BlockList import BlockList
 from flask_jwt_extended import get_jwt, get_jti, create_access_token, create_refresh_token,jwt_required, get_jwt_identity

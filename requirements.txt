@@ -1,12 +1,10 @@
-flask>=2.0,<3.0
+flask
 flask-smorest>=0.42
 python-dotenv
-flask-mongoengine
+ git+https://github.com/idoshr/flask-mongoengine.git@1.0.1
 flask-jwt-extended
 passlib
-flask-migrate
 gunicorn
 psycopg2-binary
 requests
 redis
-rq
