@@ -8,3 +8,9 @@ class UserSchema(Schema):
 
 class UserRegisterSchema(UserSchema):
      email = fields.Str(required=True)
+
+class AddTravelPlanSchema(Schema):
+    email = fields.Str(required=True)
+    planname = fields.Str(required=True)
+    startdate = fields.Str(required=True)
+    enddate = fields.Str(required=True)

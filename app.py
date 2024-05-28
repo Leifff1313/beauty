@@ -6,6 +6,8 @@ from model.TravelPlan import TravelPlanModel
 from db import mongo
 import os
 from resources.user import blp as UserBlueprint
+from resources.TravelPlan import blp as TravelPlanBlueprint
+
 from BlockList import BlockList
 from flask_jwt_extended import JWTManager
 # from flask_migrate import Migrate
@@ -39,5 +41,7 @@ def create_app(db_url=None):
 
     api = Api(app)
     api.register_blueprint(UserBlueprint)
+    api.register_blueprint(TravelPlanBlueprint)
+
     
     return app

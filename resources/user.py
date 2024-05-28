@@ -1,6 +1,7 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from model.user import UserModel
+
 from passlib.hash import pbkdf2_sha256
 from db import mongo
 from Schema import UserRegisterSchema, UserSchema
@@ -8,6 +9,8 @@ from BlockList import BlockList
 from flask_jwt_extended import get_jwt, get_jti, create_access_token, create_refresh_token,jwt_required, get_jwt_identity
 from BlockList import BlockList
 from flask import jsonify
+from datetime import datetime
+
 
 blp = Blueprint("User",__name__)
     
@@ -45,7 +48,7 @@ class UserLogin(MethodView):
         try:
             user = UserModel.objects(username=user_data["username"]).first()
         except Exception as e:
-            # print('error')
+            print('error')
             abort(500, description=f"An error occurred when querying the database: {str(e)}")
         if user and  pbkdf2_sha256.verify(user_data["password"], user.password):
 
@@ -77,6 +80,13 @@ class UserRefresh(MethodView):
         BlockList.add(jti)
         # rDB.set(jti, "",ex= ACCESS_EXPIRES)
         return{"access_token": new_token}
+    
+
+
+  
+        
+
+
 
 
 
