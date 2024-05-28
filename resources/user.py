@@ -52,7 +52,7 @@ class UserLogin(MethodView):
             token = create_access_token(identity=str(user.id),fresh= True)
             refresh_token = create_refresh_token(identity=str(user.id))
 
-            return{"access token":token,"refresh_token":refresh_token}, 201
+            return{"access_token":token,"refresh_token":refresh_token}, 201
         else:
             abort(401, description="Invalid credentials")
 @blp.route("/logout")        
