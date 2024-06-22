@@ -1,5 +1,5 @@
 flask
-flask-smorest>=0.42
+flask-smorest
 python-dotenv
  git+https://github.com/idoshr/flask-mongoengine.git@1.0.1
 flask-jwt-extended

@@ -1,6 +1,6 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from model.user import UserModel
+from models.user import UserModel
 
 from passlib.hash import pbkdf2_sha256
 from db import mongo
@@ -62,8 +62,8 @@ class UserLogin(MethodView):
             )
         if user and pbkdf2_sha256.verify(user_data["password"], user.password):
 
-            token = create_access_token(identity=str(user.email), fresh=True)
-            refresh_token = create_refresh_token(identity=str(user.email))
+            token = create_access_token(identity=str(user.id), fresh=True)
+            refresh_token = create_refresh_token(identity=str(user.id))
 
             return {"access_token": token, "refresh_token": refresh_token}, 201
         else:
@@ -85,10 +85,8 @@ class UserLogout(MethodView):
 class UserRefresh(MethodView):
     @jwt_required(refresh=True)
     def post(self):
-
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         jti = get_jwt()["jti"]
         BlockList.add(jti)
-        # rDB.set(jti, "",ex= ACCESS_EXPIRES)
         return {"access_token": new_token}

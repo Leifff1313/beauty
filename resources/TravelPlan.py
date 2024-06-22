@@ -1,87 +1,89 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from model.user import UserModel
-from model.TravelPlan import TravelPlanModel
+from models.user import UserModel
+from models.travelPlan import TravelPlanModel
 
-from passlib.hash import pbkdf2_sha256
 from db import mongo
-from Schema import UserRegisterSchema, UserSchema, AddTravelPlanSchema
-from BlockList import BlockList
-from flask_jwt_extended import (
-    get_jwt,
-    get_jti,
-    create_access_token,
-    create_refresh_token,
-    jwt_required,
-    get_jwt_identity,
-)
-from BlockList import BlockList
+from Schema import UserSchema, AddTravelPlanSchema, UpdateTravelPlanSchema
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import jsonify
 from datetime import datetime
 
+blp = Blueprint("TravelPlan", __name__, url_prefix="/travel_plans")
 
-blp = Blueprint("TravelPlan", __name__)
 
+@blp.route("/")
+class TravelPlanList(MethodView):
 
-@blp.route("/travelPlan")
-class TravelPlan(MethodView):
     @blp.arguments(AddTravelPlanSchema)
-    def post(self, user_data):
-        try:
-            user = UserModel.objects(email=user_data["email"]).first()
-        except Exception as e:
-            abort(
-                500,
-                description=f"An error occurred when querying the database: {str(e)}",
-            )
+    @jwt_required()
+    def post(self, travel_plan_data):
+        user_id = get_jwt_identity()
+        user = UserModel.objects(id=user_id).first()
+        if not user:
+            abort(404, description="User not found")
 
-        if user:
-            travelplan = TravelPlanModel(
-                planname=user_data["planname"],
-                startdate=user_data["startdate"],
-                enddate=user_data["enddate"],
-                createAt=datetime.now(),
-                user=user,
-            )
-            travelplan.save()
-            return {
-                "message": f'{user.username} created a travelplan named {user_data["planname"]}'
-            }
-
-        return {"message": "adding unsuccessfully"}
+        travel_plan = TravelPlanModel(
+            planname=travel_plan_data["planname"],
+            startdate=travel_plan_data["startdate"],
+            enddate=travel_plan_data["enddate"],
+            createAt=datetime.now(),
+            user=user,
+        )
+        travel_plan.save()
+        return {
+            "message": f'{user.username} created a travel plan named {travel_plan_data["planname"]}'
+        }, 201
 
     @jwt_required()
     def get(self):
-        user_email = get_jwt_identity()
-        print(user_email)
-        try:
-            user = UserModel.objects(email=user_email).first()
-        except Exception as e:
-            abort(
-                500,
-                description=f"An error occurred when querying the database: {str(e)}",
-            )
+        user_id = get_jwt_identity()
+        user = UserModel.objects(id=user_id).first()
+        if not user:
+            abort(404, description="User not found")
 
-        if user:
-            try:
-                travelplans = TravelPlanModel.objects(user=user)
-            except Exception as e:
-                abort(
-                    500,
-                    description=f"An error occurred when querying the database: {str(e)}",
-                )
+        travel_plans = TravelPlanModel.objects(user=user)
+        return jsonify(
+            [
+                {
+                    "planname": plan.planname,
+                    "startdate": plan.startdate,
+                    "enddate": plan.enddate,
+                    "createdAt": plan.createAt,
+                }
+                for plan in travel_plans
+            ]
+        )
 
-            travelplans_list = []
-            for plan in travelplans:
-                travelplans_list.append(
-                    {
-                        "planname": plan.planname,
-                        "startdate": plan.startdate,
-                        "enddate": plan.enddate,
-                        "createdAt": plan.createAt,
-                    }
-                )
 
-            return jsonify(travelplans_list)
+@blp.route("/<string:plan_id>")
+class TravelPlanItem(MethodView):
 
-        return {"message": "User not found"}, 404
+    @jwt_required()
+    def get(self, plan_id):
+        user_id = get_jwt_identity()
+        travel_plan = TravelPlanModel.objects(id=plan_id, user=user_id).first()
+        if not travel_plan:
+            abort(404, description="Travel plan not found")
+        return {
+            "planname": travel_plan.planname,
+            "startdate": travel_plan.startdate,
+            "enddate": travel_plan.enddate,
+            "createdAt": travel_plan.createAt,
+        }
+
+    @blp.arguments(UpdateTravelPlanSchema)
+    @jwt_required()
+    def put(self, update_data, plan_id):
+        user_id = get_jwt_identity()
+        TravelPlanModel.objects(id=plan_id, user=user_id).update(**update_data)
+        return {"message": "Travel plan updated successfully"}
+
+    @jwt_required()
+    def delete(self, plan_id):
+        user_id = get_jwt_identity()
+        travel_plan = TravelPlanModel.objects(id=plan_id, user=user_id).first()
+        if not travel_plan:
+            abort(404, description="Travel plan not found")
+        travel_plan.delete()
+        return {"message": "Travel plan deleted successfully"}
