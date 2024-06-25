@@ -50,13 +50,42 @@ def getjson(url, filename):
     with open(f'./data/{filename}.json', 'w') as json_file:
         json.dump(json_national_scenic, json_file)
 
-def getData():
+def getSpotData():
     getjson(" https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot/Taipei?%24format=JSON", "spots")
-    with open('data/Spots.json', 'r', encoding='utf-8') as f:
+    with open('data/spots.json', 'r', encoding='utf-8') as f:
         Spots = json.load(f)
     pd_spots = pd.DataFrame(Spots)
     pd_spots = pd_spots[['ScenicSpotName','DescriptionDetail','Address']]
     # print(pd_spots)
     return pd_spots
 
-getData()
+def getHotelData():
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Hotel/Taipei?%24format=JSON", "hotels")
+    with open('data/hotels.json', 'r', encoding='utf-8') as f:
+        Hotels = json.load(f)
+    pd_hotels = pd.DataFrame(Hotels)
+    pd_hotels = pd_hotels[['HotelName','Description','Address']]
+    # print(pd_hotels)
+    return pd_hotels
+
+def getRestData():
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant/Taipei?%24format=JSON", "restaurants")
+    with open('data/restaurants.json', 'r', encoding='utf-8') as f:
+        Restaurants = json.load(f)
+    pd_Restaurants = pd.DataFrame(Restaurants)
+    pd_Restaurants = pd_Restaurants[['RestaurantName','Description','Address']]
+
+    return pd_Restaurants
+
+def getActData():
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity/Taipei?%24format=JSON", "activity")
+    with open('data/activity.json', 'r', encoding='utf-8') as f:
+        Activitys = json.load(f)
+    pd_Activitys = pd.DataFrame(Activitys)
+    pd_Activitys = pd_Activitys[['ActivityName','Description','Address']]
+
+    return pd_Activitys
+# getSpotData()
+# getHotelData()
+
+
