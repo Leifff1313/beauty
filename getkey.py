@@ -55,7 +55,7 @@ def getData():
     with open('data/Spots.json', 'r', encoding='utf-8') as f:
         Spots = json.load(f)
     pd_spots = pd.DataFrame(Spots)
-    pd_spots = pd_spots[['ScenicSpotName','DescriptionDetail']]
+    pd_spots = pd_spots[['ScenicSpotName','DescriptionDetail','Address']]
     # print(pd_spots)
     return pd_spots
 
