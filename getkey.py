@@ -2,6 +2,7 @@ import requests
 import json
 import datetime
 import pandas as pd
+import os
 
 #從網站上獲取資料上的key
 app_id = 'sssun-09d597db-5ec8-446e'
@@ -33,6 +34,13 @@ class data():
             'authorization': 'Bearer ' + access_token,
             'Accept-Encoding': 'gzip'
         }
+
+
+
+def merge_address(address):
+    if address:
+        return f"{address.get('City', '')}{address.get('Town', '')}{address.get('StreetAddress', '')}"
+    return None
 
 
 def getjson(url, filename):
@@ -68,14 +76,38 @@ def getHotelData():
     # print(pd_hotels)
     return pd_hotels
 
-def getRestData():
-    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant/Taipei?%24format=JSON", "restaurants")
+def getRestDataG():
+    with open('data/RestaurantList.json', 'r', encoding='utf-8-sig') as f:
+        Restaurants = json.load(f)
+    pd_Restaurants = pd.DataFrame(Restaurants)
+    pd_Restaurants =pd.DataFrame(pd_Restaurants['Restaurants'])
+    pd_Restaurants['Restaurantname'] = pd_Restaurants['Restaurants'].apply(lambda x : x['RestaurantName'])
+    pd_Restaurants['Description'] = pd_Restaurants['Restaurants'].apply(lambda x : x['Description'])
+    pd_Restaurants['PostalAddress'] = pd_Restaurants['Restaurants'].apply(lambda x : x['PostalAddress'])
+    pd_Restaurants = pd_Restaurants.drop(columns='Restaurants')
+    pd_Restaurants['City'] = pd_Restaurants['PostalAddress'].apply(lambda x :x['City']) 
+    pd_Restaurants['Town'] = pd_Restaurants['PostalAddress'].apply(lambda x :x['Town']) 
+    pd_Restaurants['StreetAddress'] = pd_Restaurants['PostalAddress'].apply(lambda x :x['StreetAddress']) 
+    pd_Restaurants['Address'] = pd_Restaurants['PostalAddress'].apply(merge_address)   
+    pd_Restaurants = pd_Restaurants.drop(columns='PostalAddress') 
+    pd_Restaurants = pd_Restaurants.drop(columns='City') 
+    pd_Restaurants = pd_Restaurants.drop(columns='Town') 
+    pd_Restaurants = pd_Restaurants.drop(columns='StreetAddress') 
+
+    print(pd_Restaurants)
+
+    return pd_Restaurants
+
+
+def getRestDataTDX():
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant/?%24format=JSON", "restaurants")
     with open('data/restaurants.json', 'r', encoding='utf-8') as f:
         Restaurants = json.load(f)
     pd_Restaurants = pd.DataFrame(Restaurants)
     pd_Restaurants = pd_Restaurants[['RestaurantName','Description','Address']]
-
+    print(pd_Restaurants)
     return pd_Restaurants
+    
 
 def getActData():
     getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity/Taipei?%24format=JSON", "activity")
@@ -83,9 +115,14 @@ def getActData():
         Activitys = json.load(f)
     pd_Activitys = pd.DataFrame(Activitys)
     pd_Activitys = pd_Activitys[['ActivityName','Description','Address']]
-
+    # print(pd_Activitys)
     return pd_Activitys
 # getSpotData()
 # getHotelData()
 
+getRestDataTDX()
+# getActData()
 
+# print(os.path.abspath("RestaurantList.json"))
+
+# getRestDataG()
