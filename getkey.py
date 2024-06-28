@@ -59,7 +59,7 @@ def getjson(url, filename):
         json.dump(json_national_scenic, json_file)
 
 def getSpotData():
-    getjson(" https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot/Taipei?%24format=JSON", "spots")
+    getjson(" https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot/?%24format=JSON", "spots")
     with open('data/spots.json', 'r', encoding='utf-8') as f:
         Spots = json.load(f)
     pd_spots = pd.DataFrame(Spots)
@@ -68,7 +68,7 @@ def getSpotData():
     return pd_spots
 
 def getHotelData():
-    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Hotel/Taipei?%24format=JSON", "hotels")
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Hotel/?%24format=JSON", "hotels")
     with open('data/hotels.json', 'r', encoding='utf-8') as f:
         Hotels = json.load(f)
     pd_hotels = pd.DataFrame(Hotels)
@@ -94,7 +94,7 @@ def getRestDataG():
     pd_Restaurants = pd_Restaurants.drop(columns='Town') 
     pd_Restaurants = pd_Restaurants.drop(columns='StreetAddress') 
 
-    print(pd_Restaurants)
+    # print(pd_Restaurants)
 
     return pd_Restaurants
 
@@ -105,12 +105,12 @@ def getRestDataTDX():
         Restaurants = json.load(f)
     pd_Restaurants = pd.DataFrame(Restaurants)
     pd_Restaurants = pd_Restaurants[['RestaurantName','Description','Address']]
-    print(pd_Restaurants)
+    # print(pd_Restaurants)
     return pd_Restaurants
     
 
 def getActData():
-    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity/Taipei?%24format=JSON", "activity")
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity/?%24format=JSON", "activity")
     with open('data/activity.json', 'r', encoding='utf-8') as f:
         Activitys = json.load(f)
     pd_Activitys = pd.DataFrame(Activitys)
@@ -120,7 +120,7 @@ def getActData():
 # getSpotData()
 # getHotelData()
 
-getRestDataTDX()
+# getRestDataTDX()
 # getActData()
 
 # print(os.path.abspath("RestaurantList.json"))
