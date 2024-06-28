@@ -59,7 +59,7 @@ def getjson(url, filename):
         json.dump(json_national_scenic, json_file)
 
 def getSpotData():
-    getjson(" https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot/?%24format=JSON", "spots")
+    getjson(" https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot/NewTaipei?%24format=JSON", "spots")
     with open('data/spots.json', 'r', encoding='utf-8') as f:
         Spots = json.load(f)
     pd_spots = pd.DataFrame(Spots)
@@ -68,7 +68,7 @@ def getSpotData():
     return pd_spots
 
 def getHotelData():
-    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Hotel/?%24format=JSON", "hotels")
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Hotel/NewTaipei?%24format=JSON", "hotels")
     with open('data/hotels.json', 'r', encoding='utf-8') as f:
         Hotels = json.load(f)
     pd_hotels = pd.DataFrame(Hotels)
@@ -76,6 +76,7 @@ def getHotelData():
     # print(pd_hotels)
     return pd_hotels
 
+#這是全台餐廳資料
 def getRestDataG():
     with open('data/RestaurantList.json', 'r', encoding='utf-8-sig') as f:
         Restaurants = json.load(f)
@@ -98,9 +99,9 @@ def getRestDataG():
 
     return pd_Restaurants
 
-
+#新北餐廳資料
 def getRestDataTDX():
-    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant/?%24format=JSON", "restaurants")
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant/NewTaipei?%24format=JSON", "restaurants")
     with open('data/restaurants.json', 'r', encoding='utf-8') as f:
         Restaurants = json.load(f)
     pd_Restaurants = pd.DataFrame(Restaurants)
@@ -110,7 +111,7 @@ def getRestDataTDX():
     
 
 def getActData():
-    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity/?%24format=JSON", "activity")
+    getjson("https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity/NewTaipei?%24format=JSON", "activity")
     with open('data/activity.json', 'r', encoding='utf-8') as f:
         Activitys = json.load(f)
     pd_Activitys = pd.DataFrame(Activitys)
@@ -120,7 +121,7 @@ def getActData():
 # getSpotData()
 # getHotelData()
 
-# getRestDataTDX()
+getRestDataTDX()
 # getActData()
 
 # print(os.path.abspath("RestaurantList.json"))
